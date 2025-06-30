@@ -2,13 +2,13 @@
 
 A Python module to compute a composite **Global Score** from multiple metrics using radar chart geometry, with threshold-based penalties and weighted importance. Provides both numeric scores and human-readable interpretations.
 
-##  Features
+## Features
 
 ✅ Radar polygon area calculation to combine multiple metrics into a single geometric score.  
 ✅ Customizable per-metric thresholds to flag metrics below minimum acceptable levels.  
 ✅ Weighted penalties that reduce the global score based on the importance of failing metrics.  
 ✅ Interpretation layer that classifies overall quality (`excellent`, `acceptable`, `poor`) with meaningful feedback.  
-✅ Interactive radar visualization with Streamlit .  
+✅ Interactive radar visualization with Streamlit.
 
 ## 📐 How It Works: Step-by-Step Calculation
 
@@ -16,81 +16,80 @@ The **Global Metric Radar** computes an overall quality score by representing mu
 
 ### 1️⃣ Represent Metrics as Points on a Radar Chart
 
-- For `n` metrics normalized to [0, 1], denoted:
-r = [r₀, r₁, ..., rₙ₋₁]
+- For *n* metrics normalized to [0, 1], denoted:
 
+  r = [r₀, r₁, ..., rₙ₋₁]
 
 - Metrics are placed on evenly spaced axes around a radar chart.
+
 - The angle between consecutive axes is:
-$$
-\theta = \frac{2\pi}{n}
-$$
+
+  θ = 2π / n
 
 ---
 
 ### 2️⃣ Compute the Polygon Area Formed by Metrics
 
 The area of the polygon formed by connecting metrics in order is calculated by:
-$$
-\text{Area} = \frac{1}{2} \left| \sum_{i=0}^{n-1} r_i \cdot r_{(i+1) \bmod n} \cdot \sin(\theta) \right|
-$$
+
+Area = (1/2) × | Σᵢ₌₀ⁿ⁻¹  rᵢ × r_{(i+1) mod n} × sin(θ) |
 
 where:
-- \( r_i \) is the metric on axis \( i \),
-- \( r_{(i+1) \bmod n} \) wraps around to form a closed shape,
-- \( \sin(\theta) \) accounts for the fixed angle between consecutive axes.
+
+- rᵢ is the metric on axis i,
+- r_{(i+1) mod n} wraps around to form a closed shape,
+- sin(θ) accounts for the fixed angle between consecutive axes.
 
 ---
 
 ### 3️⃣ Normalize the Polygon Area
 
-The maximum possible area, achieved when all metrics are 1, is:
-$$
-\text{Max Area} = \frac{1}{2} \cdot n \cdot \sin(\theta)
-$$
+The maximum possible area, achieved when all metrics equal 1, is:
+
+Max Area = (1/2) × n × sin(θ)
 
 The **normalized area** is given by:
-$$
-\text{Normalized Area} = \frac{\text{Area}}{\text{Max Area}}
-$$
-ensuring the result lies in [0, 1].
+
+Normalized Area = Area / Max Area
+
+which ensures the result lies in [0, 1].
 
 ---
 
 ### 4️⃣ Identify Metrics Below Thresholds
 
 Each metric is compared against its threshold. Metrics with:
-$$
-r_i < \text{threshold}_i
-$$
+
+rᵢ < thresholdᵢ
+
 are recorded as failing.
 
 ---
 
 ### 5️⃣ Compute Weighted Penalty
 
-Metrics have importance weights \( w_i \). The penalty is calculated as:
+Metrics have importance weights wᵢ. The penalty is calculated as:
+
 - Total weight:
-$$
-W_{\text{total}} = \sum_{i=0}^{n-1} w_i
-$$
+
+  W_total = Σᵢ₌₀ⁿ⁻¹ wᵢ
+
 - Weight of failing metrics:
-$$
-W_{\text{bad}} = \sum_{i \in \text{bad}} w_i
-$$
+
+  W_bad = Σ_{i ∈ bad} wᵢ
+
 - Penalty factor:
-$$
-\text{Penalty} = 1 - \frac{W_{\text{bad}}}{W_{\text{total}}}
-$$
+
+  Penalty = 1 - (W_bad / W_total)
 
 ---
 
 ### 6️⃣ Calculate Final Global Score
 
 Combining geometry and penalty:
-$$
-\text{Global Score} = \text{Normalized Area} \times \text{Penalty}
-$$
+
+Global Score = Normalized Area × Penalty
+
 This single score reflects both overall performance and the severity of failing metrics.
 
 ---
@@ -98,12 +97,14 @@ This single score reflects both overall performance and the severity of failing 
 ### 7️⃣ Generate Human-Readable Interpretation
 
 The `interpret_score()` function provides insights like:
+
 - The number of metrics below thresholds.
 - Penalty impact as percentage reduction from normalized area.
 - Overall quality category:
-- ✅ Excellent
-- ⚠️ Acceptable with moderate issues
-- ❌ Poor, critical improvements needed.
+
+  - ✅ Excellent  
+  - ⚠️ Acceptable with moderate issues  
+  - ❌ Poor, critical improvements needed.
 
 ---
 
@@ -111,12 +112,15 @@ The `interpret_score()` function provides insights like:
 
 This package requires:
 
-- `numpy`
-- `streamlit`
-- `plotlit `
+- `numpy`  
+- `streamlit`  
+- `plotly`
+
 Install via pip:
+
 ```bash
 pip install numpy streamlit plotly
+
 ```
 
 # API Reference
@@ -163,4 +167,4 @@ The included if __name__ == "__main__" block demonstrates usage with Streamlit a
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License 
